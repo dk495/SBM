@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Form</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Lead Form</h2>
+    <form id="leadForm">
+      <div class="form-row">
+      
+      
+      <div class="form-group">
+        <label for="phone_home">Phone</label>
+        <input type="text" class="form-control" id="caller_id" placeholder="Phone">
+     </div>
+</div>
+<div class="form-row">
+ <div class="form-group">
+        <label for="jornaya_leadid">Jornaya Leadid</label>
+        <input type="text" class="form-control" id="jornaya_leadid" placeholder="Jornaya Leadid">
+     </div>
+</div>
+      <input type="hidden" id="traffic_source_id" value="2254">
+      <input type="hidden" id="lead_token" value="0c7400289dfe4b18aa2bcf10da3fe1c6">
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+<div id="alertContainer"></div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <!-- Custom script for form submission and notification -->
+  <script>
+
+
+    document.getElementById('leadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const phone_home = '+1' + document.getElementById('caller_id').value;
+      const formData = new FormData(this);
+      
+      
+   
+      formData.append('traffic_source_id', document.getElementById('traffic_source_id').value);
+      formData.append('lead_token', document.getElementById('lead_token').value);
+formData.append('caller_id', phone_home);
+formData.append('jornaya_leadid', document.getElementById('jornaya_leadid').value);
+
+      const url = 'https://global-digital-media.trackdrive.com/api/v1/leads?' + new URLSearchParams(formData).toString();
+
+      fetch(url, {
+        method: 'POST'
+      })
+      .then(response => {
+        if (response.status === 200) {
+          const successAlert = `
+            <div class="alert alert-success" role="alert">
+              200 : Form submitted successfully! But Duplicate (Maybe Connect).
+            </div>`;
+document.getElementById('alertContainer').innerHTML = '';
+          document.getElementById('alertContainer').insertAdjacentHTML('beforeend', successAlert);
+          // Clear form fields
+          document.getElementById('leadForm').reset();
+        } else if (response.status === 201) {
+          const successAlert = `
+            <div class="alert alert-success" role="alert">
+              201 : Form submitted successfully!
+            </div>`;
+document.getElementById('alertContainer').innerHTML = '';
+          document.getElementById('alertContainer').insertAdjacentHTML('beforeend', successAlert);
+          // Clear form fields
+          document.getElementById('leadForm').reset();
+        } else if (response.status === 422) {
+          response.json().then(data => {
+            const errorAlert = `
+              <div class="alert alert-danger" role="alert">
+                Duplicate lead / DNC / BLA Not Submitted
+</div>`;
+document.getElementById('alertContainer').innerHTML = '';
+document.getElementById('alertContainer').insertAdjacentHTML('beforeend', errorAlert);
+              
+            
+          });
+        } else {
+          const errorAlert = `
+            <div class="alert alert-danger" role="alert">
+              Form submission failed. Please try again.
+</div>`;
+document.getElementById('alertContainer').innerHTML = '';
+document.getElementById('leadForm').insertAdjacentHTML('beforeend', errorAlert);
+            
+         
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+ <script>
+        document.addEventListener("contextmenu", function (e) {
+            e.preventDefault(); // Prevent the context menu from appearing
+        });
+    </script>
+</body>
+</html>
