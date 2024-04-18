@@ -21,7 +21,7 @@ formData.append('Jornaya', document.getElementById('jornaya_lead_id').value);
      
      
 
-      const url = 'https://display.ringba.com/enrich/2056942661213881557?' + new URLSearchParams(formData).toString();
+      const url = 'https://display.ringba.com/enrich/2402377065497101819?' + new URLSearchParams(formData).toString();
 
       const xhr = new XMLHttpRequest();
       xhr.open('POST', url);
